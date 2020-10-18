@@ -3,6 +3,8 @@
 	"displayName": "TerminalRelativePath",
 	"description": "Click paths in the Terminal relative to the build folder",
 	"version": "0.0.1",
+	"publisher": "GrandChris",
+	"repository": "https://github.com/GrandChris/TerminalRelativePath",
 	"engines": {
 		"vscode": "^1.50.0"
 	},
@@ -10,7 +12,7 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:terminalrelativepath.helloWorld"
+		"onStartupFinished"
 	],
 	"main": "./out/extension.js",
 	"contributes": {

@@ -13,11 +13,11 @@ export function activate(context: vscode.ExtensionContext) {
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('terminalrelativepath.helloWorld', () => {
+	// let disposable = vscode.commands.registerCommand('terminalrelativepath.helloWorld', () => {
 		// The code you place here will be executed every time your command is executed
 
 		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from TerminalRelativePath!');
+		// vscode.window.showInformationMessage('Hello World from TerminalRelativePath!');
 
 		vscode.window.registerTerminalLinkProvider({
 			provideTerminalLinks: (context, token) => {
@@ -55,15 +55,15 @@ export function activate(context: vscode.ExtensionContext) {
 			  ];
 			},
 			handleTerminalLink: (link: any) => {
-			  vscode.window.showInformationMessage(`Link activated (data = ${link.tooltip})`);
+			//   vscode.window.showInformationMessage(`Link activated (data = ${link.data})`);
 			//   printDefinitionsForActiveEditor();
-			  vscode.commands.executeCommand('vscode.open', vscode.Uri.parse("file:///" + link.data))
+			  vscode.commands.executeCommand('vscode.open', vscode.Uri.file(link.data))
 			}
 		  });
-	});
+	// });
 
 
-	context.subscriptions.push(disposable);
+	// context.subscriptions.push(disposable);
 }
 
 

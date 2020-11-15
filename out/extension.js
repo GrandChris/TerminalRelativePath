@@ -10,51 +10,77 @@ function activate(context) {
     // Use the console to output diagnostic information (console.log) and errors (console.error)
     // This line of code will only be executed once when your extension is activated
     console.log('Congratulations, your extension "terminalrelativepath" is now active!');
-    // The command has been defined in the package.json file
-    // Now provide the implementation of the command with registerCommand
-    // The commandId parameter must match the command field in package.json
-    // let disposable = vscode.commands.registerCommand('terminalrelativepath.helloWorld', () => {
-    // The code you place here will be executed every time your command is executed
     // Display a message box to the user
     // vscode.window.showInformationMessage('Hello World from TerminalRelativePath!');
     vscode.window.registerTerminalLinkProvider({
         provideTerminalLinks: (context, token) => {
-            // Detect the first instance of the word "test" if it exists and linkify it
-            //   const startIndex = (context.line as string).indexOf('../source/main.cpp');
-            //   var regex = new RegExp('\.\..*cpp')
-            //   var regex = new RegExp('.*:\\d+:')
-            var regex = new RegExp('^\.\.(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$');
-            const problemMatcher = context.line.match(regex);
-            const startIndex = problemMatcher === null || problemMatcher === void 0 ? void 0 : problemMatcher.index;
-            if (startIndex === undefined) {
-                return [];
+            var regex1 = new RegExp('^\.\.(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$');
+            var problemMatcher = context.line.match(regex1);
+            var startIndex = problemMatcher === null || problemMatcher === void 0 ? void 0 : problemMatcher.index;
+            var message = undefined;
+            var severity = undefined;
+            var column = undefined;
+            var line = undefined;
+            var file = undefined;
+            if (startIndex !== undefined) {
+                message = problemMatcher === null || problemMatcher === void 0 ? void 0 : problemMatcher.pop();
+                severity = problemMatcher === null || problemMatcher === void 0 ? void 0 : problemMatcher.pop();
+                column = problemMatcher === null || problemMatcher === void 0 ? void 0 : problemMatcher.pop();
+                line = problemMatcher === null || problemMatcher === void 0 ? void 0 : problemMatcher.pop();
+                file = problemMatcher === null || problemMatcher === void 0 ? void 0 : problemMatcher.pop();
             }
-            const message = problemMatcher === null || problemMatcher === void 0 ? void 0 : problemMatcher.pop();
-            const severity = problemMatcher === null || problemMatcher === void 0 ? void 0 : problemMatcher.pop();
-            const column = problemMatcher === null || problemMatcher === void 0 ? void 0 : problemMatcher.pop();
-            const line = problemMatcher === null || problemMatcher === void 0 ? void 0 : problemMatcher.pop();
-            const file = problemMatcher === null || problemMatcher === void 0 ? void 0 : problemMatcher.pop();
+            else {
+                // try different regex
+                var regex2 = new RegExp('^\.\.(.*?):.*$');
+                problemMatcher = context.line.match(regex2);
+                startIndex = problemMatcher === null || problemMatcher === void 0 ? void 0 : problemMatcher.index;
+                if (startIndex === undefined) {
+                    return [];
+                }
+                file = problemMatcher === null || problemMatcher === void 0 ? void 0 : problemMatcher.pop();
+            }
+            // assign link variables
             const fileLength = file ? file.length + 2 : 0;
+            const columnLength = column ? column.length + 1 : 0;
+            const lineLength = line ? line.length + 1 : 0;
+            const length = fileLength + columnLength + lineLength;
             const filePath = file ? vscode.workspace.rootPath + file : vscode.workspace.rootPath;
+            const tooltipPath = filePath ? filePath + ":" : "";
+            const tooltipLine = line ? line + ":" : "";
+            const tooltipColumn = column ? column + ":" : "";
+            const tooltip = tooltipPath + tooltipLine + tooltipColumn;
+            const line_n = line ? +line - 1 : undefined;
+            const column_n = column ? +column - 1 : undefined;
             // Return an array of link results, this example only returns a single link
             return [
                 {
                     startIndex,
-                    length: fileLength,
-                    tooltip: filePath,
+                    length: length,
+                    tooltip: tooltip,
                     // You can return data in this object to access inside handleTerminalLink
-                    data: filePath
+                    filePath: filePath,
+                    line: line_n,
+                    column: column_n
                 }
             ];
         },
         handleTerminalLink: (link) => {
             //   vscode.window.showInformationMessage(`Link activated (data = ${link.data})`);
             //   printDefinitionsForActiveEditor();
-            vscode.commands.executeCommand('vscode.open', vscode.Uri.file(link.data));
+            if (link.line !== undefined) {
+                const start = new vscode.Position(link.line, link.column);
+                const end = new vscode.Position(link.line, link.column);
+                const range = new vscode.Range(start, end);
+                const opts = {
+                    selection: range
+                };
+                vscode.commands.executeCommand('vscode.open', vscode.Uri.file(link.filePath), opts);
+            }
+            else {
+                vscode.commands.executeCommand('vscode.open', vscode.Uri.file(link.filePath));
+            }
         }
     });
-    // });
-    // context.subscriptions.push(disposable);
 }
 exports.activate = activate;
 // this method is called when your extension is deactivated

@@ -1,8 +1,9 @@
 {
-	"name": "terminalrelativepath",
-	"displayName": "TerminalRelativePath",
-	"description": "Click paths in the Terminal relative to the build folder",
-	"version": "0.0.1",
+	"name": "just-let-me-click-this-freaking-paths",
+	"displayName": "Just let me click this freaking paths",
+	"description": "Enables you to click relative paths starting from the './build' directory",
+	"icon": "https://github.com/GrandChris/TerminalRelativePath/blob/master/media/icon.png?raw=true",
+	"version": "1.0.0",
 	"publisher": "GrandChris",
 	"repository": "https://github.com/GrandChris/TerminalRelativePath",
 	"engines": {
@@ -15,14 +16,6 @@
 		"onStartupFinished"
 	],
 	"main": "./out/extension.js",
-	"contributes": {
-		"commands": [
-			{
-				"command": "terminalrelativepath.helloWorld",
-				"title": "Hello World"
-			}
-		]
-	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
 		"compile": "tsc -p ./",

@@ -10,60 +10,93 @@ export function activate(context: vscode.ExtensionContext) {
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "terminalrelativepath" is now active!');
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	// let disposable = vscode.commands.registerCommand('terminalrelativepath.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
+	// Display a message box to the user
+	// vscode.window.showInformationMessage('Hello World from TerminalRelativePath!');
 
-		// Display a message box to the user
-		// vscode.window.showInformationMessage('Hello World from TerminalRelativePath!');
+	vscode.window.registerTerminalLinkProvider({
+		provideTerminalLinks: (context, token) => {
 
-		vscode.window.registerTerminalLinkProvider({
-			provideTerminalLinks: (context, token) => {
-			  // Detect the first instance of the word "test" if it exists and linkify it
-			//   const startIndex = (context.line as string).indexOf('../source/main.cpp');
-			//   var regex = new RegExp('\.\..*cpp')
-			//   var regex = new RegExp('.*:\\d+:')
-			  var regex = new RegExp('^\.\.(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$')
-			  const problemMatcher = (context.line as string).match(regex);
-			  
-			  const startIndex = problemMatcher?.index
+			var regex1 = new RegExp('^\.\.(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$')
+			var problemMatcher = (context.line as string).match(regex1);
+			
+			var startIndex = problemMatcher?.index
 
-			  if (startIndex === undefined) {
+			var message =  undefined;
+			var severity = undefined;
+			var column =   undefined;
+			var line =     undefined;
+			var file =     undefined;
+
+			if (startIndex !== undefined) {
+			message = problemMatcher?.pop();
+			severity = problemMatcher?.pop();
+			column = problemMatcher?.pop();
+			line = problemMatcher?.pop();
+			file = problemMatcher?.pop();
+			}
+			else { 
+			// try different regex
+			var regex2 = new RegExp('^\.\.(.*?):.*$')
+			problemMatcher = (context.line as string).match(regex2);
+			
+			startIndex = problemMatcher?.index
+			if (startIndex === undefined) {
 				return [];
-			  }
+			}
 
-			  const message = problemMatcher?.pop();
-			  const severity = problemMatcher?.pop();
-			  const column = problemMatcher?.pop();
-			  const line = problemMatcher?.pop();
-			  const file = problemMatcher?.pop();
+			file = problemMatcher?.pop();
+			}
 
-			  const fileLength = file? file.length + 2 : 0;
-			  const filePath = file? vscode.workspace.rootPath + file : vscode.workspace.rootPath
+			// assign link variables
+			const fileLength = file? file.length + 2 : 0;
+			const columnLength = column? column.length + 1 : 0;
+			const lineLength = line? line.length + 1 : 0;
+			const length = fileLength + columnLength + lineLength;
 
-			  // Return an array of link results, this example only returns a single link
-			  return [
-				{
-				  startIndex,
-				  length: fileLength,
-				  tooltip: filePath,
-				  // You can return data in this object to access inside handleTerminalLink
-				  data: filePath
-				}
-			  ];
-			},
-			handleTerminalLink: (link: any) => {
+			const filePath = file? vscode.workspace.rootPath + file : vscode.workspace.rootPath
+
+			const tooltipPath = filePath? filePath + ":" : "";
+			const tooltipLine = line? line + ":" : "";
+			const tooltipColumn = column? column + ":" : "";
+
+			const tooltip = tooltipPath + tooltipLine + tooltipColumn;
+
+			const line_n = line? +line-1 : undefined;
+			const column_n = column? +column-1 : undefined;
+			
+			// Return an array of link results, this example only returns a single link
+			return [
+			{
+				startIndex,
+				length: length,
+				tooltip: tooltip,
+				// You can return data in this object to access inside handleTerminalLink
+				filePath: filePath,
+				line: line_n,
+				column: column_n
+			}
+			];
+		},
+		handleTerminalLink: (link: any) => {
 			//   vscode.window.showInformationMessage(`Link activated (data = ${link.data})`);
 			//   printDefinitionsForActiveEditor();
-			  vscode.commands.executeCommand('vscode.open', vscode.Uri.file(link.data))
+
+			if(link.line !== undefined) {
+				const start = new vscode.Position(link.line, link.column);
+				const end = new vscode.Position(link.line, link.column)
+				const range = new vscode.Range(start, end);
+
+				const opts: vscode.TextDocumentShowOptions = {
+					selection: range
+				};
+
+				vscode.commands.executeCommand('vscode.open', vscode.Uri.file(link.filePath), opts);
 			}
-		  });
-	// });
-
-
-	// context.subscriptions.push(disposable);
+			else {
+				vscode.commands.executeCommand('vscode.open', vscode.Uri.file(link.filePath));
+			}
+		}
+	});
 }
 
 

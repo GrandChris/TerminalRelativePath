@@ -1,7 +1,7 @@
 {
 	"name": "just-let-me-click-this-freaking-paths",
 	"displayName": "Just let me click this freaking paths",
-	"description": "Click relative paths starting at the './build' directory",
+	"description": "Enables you to click relative paths, starting at the './build' directory, inside the integrated terminal.",
 	"icon": "media/icon.png",
 	"version": "1.0.0",
 	"publisher": "GrandChris",

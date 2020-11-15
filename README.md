@@ -1,5 +1,5 @@
 # Just let me click this freaking paths
-Click relative paths starting at the './build' directory
+Enables you to click relative paths, starting at the './build' directory, inside the integrated terminal.
 
 ## Background
 When you use CMake and Ninja with GCC you get relative paths starting at the './build' directory. You can specify the path for the Problem Matcher of your VSCode task, but this does not influence the behavior of the integrated terminal.   

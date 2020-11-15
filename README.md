@@ -7,4 +7,4 @@ An option would be to use absolute paths, but there is no option for it, weather
 To be able to still click the relative paths in the integrated terminal, this extension is born.
 
 ## Demo
-![Demo](media/ucppcoro-1605453080747.gif)
+![Demo](https://raw.githubusercontent.com/GrandChris/TerminalRelativePath/main/media/ucppcoro-1605453080747.gif)

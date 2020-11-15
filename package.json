@@ -3,7 +3,7 @@
 	"displayName": "Just let me click this freaking paths",
 	"description": "Enables you to click relative paths, starting at the './build' directory, inside the integrated terminal.",
 	"icon": "media/icon.png",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"publisher": "GrandChris",
 	"repository": "https://github.com/GrandChris/TerminalRelativePath",
 	"engines": {

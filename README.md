@@ -9,3 +9,6 @@ To be able to still click the relative paths in the integrated terminal, this ex
 
 ## Demo
 ![Demo](https://raw.githubusercontent.com/GrandChris/TerminalRelativePath/main/media/ucppcoro-1605453080747.gif)
+
+## Obsoletion
+This extension became obsolete with https://gitlab.kitware.com/cmake/cmake/-/merge_requests/6148. The new recommended way to fix this issue is to update to CMake > 3.21.0.
